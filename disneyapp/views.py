@@ -34,24 +34,40 @@ def sentiment(text):
     text_score = SentimentIntensityAnalyzer().polarity_scores(text)
     return text_score['compound']
 
-def get_disney_data(request):
-    review_texts =  DisneylandReview.objects.all().values()
-    df = pd.DataFrame(review_texts)
-    branch = df['branch']
-    # hongkong_data = df[df['branch'] == 'Disneyland_HongKong']
-    # hongkong_text = hongkong_data[['review_id','text','branch']]
-    # print(hongkong_text)
-    df['sentiment'] = df['text'].apply(sentiment)
-    # print(df[['id', 'branch', 'text', 'sentiment']])
-    df['sentiment_category'] = df['sentiment'].apply(lambda score: 'positive' if score > 0 else 'negative' if score < 0 else 'neutral')
-    print( df['sentiment_category'])
+def classify_sentiment(score):
+    if score and score > 0:
+        return 'positive'
+    elif score and score < 0:
+        return 'negative'
+    else:
+        return 'neutral'
 
-def generate_catagories(request):
-    categories = DisneylandReview.objects.filter(categories = categories)
-    reviews = DisneylandReview.objects.all().values()
-    df = pd.DataFrame(reviews)
-    df['sentiment'] = df['text'].apply(sentiment)
-    print(df['categories'])
-    categories = df['sentiment'].apply(lambda score: 'positive' if score > 0 else 'negative' if score < 0 else 'neutral')
-    print(df['categories'])
-    categories.save()
+def calculate_sentiment_percentage(df):
+    total_count = len(df)
+    positive_percentage = (df[df['sentiment_category'] == 'positive'].shape[0] / total_count) * 100
+    neutral_percentage = (df[df['sentiment_category'] == 'neutral'].shape[0] / total_count) * 100
+    negative_percentage = (df[df['sentiment_category'] == 'negative'].shape[0] / total_count) * 100
+    
+    return positive_percentage, neutral_percentage, negative_percentage
+
+def sentiment_HongKong(request):
+    reviews_hongkong = DisneylandReview.objects.filter(branch='Disneyland_HongKong')
+    df_hongkong = pd.DataFrame(list(reviews_hongkong.values()))
+
+    df_hongkong['sentiment'] = df_hongkong['text'].apply(sentiment)
+    df_hongkong['sentiment_category'] = df_hongkong['sentiment'].apply(classify_sentiment)
+    positive_percentage, neutral_percentage, negative_percentage = calculate_sentiment_percentage(df_hongkong)
+    print(df_hongkong)
+    print("Branch: Hong Kong")
+    print(f"Positive Percentage: {positive_percentage}%")
+    print(f"Neutral Percentage: {neutral_percentage}%")
+    print(f"Negative Percentage: {negative_percentage}%")
+    
+    context = {
+        'branch': 'Hong Kong',
+        'positive_percentage': positive_percentage,
+        'neutral_percentage': neutral_percentage,
+        'negative_percentage': negative_percentage,
+    }
+    return render(request, 'your_template.html', context)
+   
