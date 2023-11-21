@@ -6,3 +6,4 @@ class DisneylandReview(models.Model):
     rating = models.IntegerField()
     text = models.CharField(max_length=1000)
     branch = models.CharField(max_length=255)
+    categories = models.CharField(max_length=255)

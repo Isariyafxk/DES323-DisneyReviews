@@ -32,16 +32,26 @@ nltk.download('vader_lexicon')
 
 def sentiment(text):
     text_score = SentimentIntensityAnalyzer().polarity_scores(text)
-    return print("score = ",text_score['compound'])
+    return text_score['compound']
 
 def get_disney_data(request):
     review_texts =  DisneylandReview.objects.all().values()
     df = pd.DataFrame(review_texts)
-    df['sentiment'] = df['text'].apply(sentiment)
-    print(df[['id', 'branch', 'text', 'sentiment']])
-    # branch = df['branch']
-    # hongkong_data = df[df['branch'] == 'Disneyland_Paris']
-    # hongkong_text = hongkong_data[['review_id','text']]
+    branch = df['branch']
+    # hongkong_data = df[df['branch'] == 'Disneyland_HongKong']
+    # hongkong_text = hongkong_data[['review_id','text','branch']]
     # print(hongkong_text)
+    df['sentiment'] = df['text'].apply(sentiment)
+    # print(df[['id', 'branch', 'text', 'sentiment']])
+    df['sentiment_category'] = df['sentiment'].apply(lambda score: 'positive' if score > 0 else 'negative' if score < 0 else 'neutral')
+    print( df['sentiment_category'])
 
-   
+def generate_catagories(request):
+    categories = DisneylandReview.objects.filter(categories = categories)
+    reviews = DisneylandReview.objects.all().values()
+    df = pd.DataFrame(reviews)
+    df['sentiment'] = df['text'].apply(sentiment)
+    print(df['categories'])
+    categories = df['sentiment'].apply(lambda score: 'positive' if score > 0 else 'negative' if score < 0 else 'neutral')
+    print(df['categories'])
+    categories.save()
