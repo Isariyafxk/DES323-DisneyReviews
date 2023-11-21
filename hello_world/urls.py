@@ -23,10 +23,10 @@ from disneyapp import views as disneyapp_views
 from hello_world.core import views as core_views
 
 urlpatterns = [
-    path("", core_views.index),
+    path("reviews/", include("disneyapp.urls")),
     path("admin/", admin.site.urls),
     path("__reload__/", include("django_browser_reload.urls")),
-    # path("disneyapp/", disneyapp_views.data_index_view)
+    path("import/csv", disneyapp_views.import_data_csv),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
