@@ -3,5 +3,7 @@ from disneyapp import views
 
 urlpatterns = [
     path("importdata",views.import_data_csv),
-    path("alldata",views.sentiment_HongKong)
+    path("sentimentHK",views.sentiment_HongKong),
+    path("sentimentPS",views.sentiment_Paris),
+    path("sentimentCL",views.sentiment_California)
 ]

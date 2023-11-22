@@ -47,7 +47,6 @@ def calculate_sentiment_percentage(df):
     positive_percentage = (df[df['sentiment_category'] == 'positive'].shape[0] / total_count) * 100
     neutral_percentage = (df[df['sentiment_category'] == 'neutral'].shape[0] / total_count) * 100
     negative_percentage = (df[df['sentiment_category'] == 'negative'].shape[0] / total_count) * 100
-    
     return positive_percentage, neutral_percentage, negative_percentage
 
 def sentiment_HongKong(request):
@@ -58,6 +57,7 @@ def sentiment_HongKong(request):
     df_hongkong['sentiment_category'] = df_hongkong['sentiment'].apply(classify_sentiment)
     positive_percentage, neutral_percentage, negative_percentage = calculate_sentiment_percentage(df_hongkong)
     print(df_hongkong)
+    # print(df_hongkong[['review_id','text']])
     print("Branch: Hong Kong")
     print(f"Positive Percentage: {positive_percentage}%")
     print(f"Neutral Percentage: {neutral_percentage}%")
@@ -69,5 +69,49 @@ def sentiment_HongKong(request):
         'neutral_percentage': neutral_percentage,
         'negative_percentage': negative_percentage,
     }
-    return render(request, 'your_template.html', context)
+    return render(request, 'places.html', context)
+
+def sentiment_Paris(request):
+    reviews_paris = DisneylandReview.objects.filter(branch='Disneyland_Paris')
+    df_paris = pd.DataFrame(list(reviews_paris.values()))
+
+    df_paris['sentiment'] = df_paris['text'].apply(sentiment)
+    df_paris['sentiment_category'] = df_paris['sentiment'].apply(classify_sentiment)
+    positive_percentage, neutral_percentage, negative_percentage = calculate_sentiment_percentage(df_paris)
+    print(df_paris)
+    # print(df_hongkong[['review_id','text']])
+    print("Branch: Paris")
+    print(f"Positive Percentage: {positive_percentage}%")
+    print(f"Neutral Percentage: {neutral_percentage}%")
+    print(f"Negative Percentage: {negative_percentage}%")
+    
+    context = {
+        'branch': 'Paris',
+        'positive_percentage': positive_percentage,
+        'neutral_percentage': neutral_percentage,
+        'negative_percentage': negative_percentage,
+    }
+    return render(request, 'places.html', context)
+
+def sentiment_California(request):
+    reviews_california = DisneylandReview.objects.filter(branch='Disneyland_California')
+    df_california = pd.DataFrame(list(reviews_california.values()))
+
+    df_california['sentiment'] = df_california['text'].apply(sentiment)
+    df_california['sentiment_category'] = df_california['sentiment'].apply(classify_sentiment)
+    positive_percentage, neutral_percentage, negative_percentage = calculate_sentiment_percentage(df_california)
+    print(df_california)
+    # print(df_hongkong[['review_id','text']])
+    print("Branch: California")
+    print(f"Positive Percentage: {positive_percentage}%")
+    print(f"Neutral Percentage: {neutral_percentage}%")
+    print(f"Negative Percentage: {negative_percentage}%")
+    
+    context = {
+        'branch': 'California',
+        'positive_percentage': positive_percentage,
+        'neutral_percentage': neutral_percentage,
+        'negative_percentage': negative_percentage,
+    }
+    return render(request, 'places.html', context)
    
