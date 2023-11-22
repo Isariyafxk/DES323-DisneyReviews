@@ -1,0 +1,51 @@
+<p>Branch: {{ branch }}</p>
+<p>Positive Percentage: {{ positive_percentage }} </p>
+<p>Neutral Percentage: {{ neutral_percentage }}</p>
+<p>Negative Percentage: {{ negative_percentage }} </p>
+ 
+<div class=" piechart"> 
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <div id="pie-chart">
+        <script>
+            const data = [
+                { label: 'Positive', value: {{ positive_percentage }} },
+                { label: 'Negative', value: {{ negative_percentage }} },
+                { label: 'Neutral', value: {{ neutral_percentage }} },
+               
+            ];
+
+            const width = 400; // Width of the SVG container
+            const height = 400; // Height of the SVG container
+            const radius = Math.min(width, height) / 2; // Radius of the pie chart
+
+            const color = d3.scaleOrdinal()
+                .domain(data.map(d => d.label))
+                .range(['#BCC9CC', '#D2D6D0', '#290568', '#0F0595', '#283AAC']);
+
+            const svg = d3.select('#pie-chart')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height)
+                .append('g')
+                .attr('transform', `translate(${width / 2},${height / 2})`);
+
+            const pie = d3.pie()
+                .value(d => d.value);
+
+            const data_ready = pie(data);
+            const arc = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius);
+
+            svg.selectAll('path')
+                .data(data_ready)
+                .enter()
+                .append('path')
+                .attr('d', arc)
+                .attr('fill', (d, i) => color(i));
+
+            // No legend is created, and labels inside the pie chart are removed.
+        </script>
+        <p style="font-size: 42px; color: #290568; font-weight: 1000;">{{ branch }}</p>
+    </div>
+</div>
