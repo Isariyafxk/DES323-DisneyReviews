@@ -59,9 +59,9 @@ def sentiment_HongKong(request):
     print(df_hongkong)
     # print(df_hongkong[['review_id','text']])
     print("Branch: Hong Kong")
-    print(f"Positive Percentage: {positive_percentage}%")
-    print(f"Neutral Percentage: {neutral_percentage}%")
-    print(f"Negative Percentage: {negative_percentage}%")
+    print(f"Positive Percentage: {positive_percentage}")
+    print(f"Neutral Percentage: {neutral_percentage}")
+    print(f"Negative Percentage: {negative_percentage}")
     
     context = {
         'branch': 'Hong Kong',
@@ -69,7 +69,7 @@ def sentiment_HongKong(request):
         'neutral_percentage': neutral_percentage,
         'negative_percentage': negative_percentage,
     }
-    return render(request, 'places.html', context)
+    return render(request, 'webpages/places.html', context)
 
 def sentiment_Paris(request):
     reviews_paris = DisneylandReview.objects.filter(branch='Disneyland_Paris')
@@ -81,9 +81,9 @@ def sentiment_Paris(request):
     print(df_paris)
     # print(df_hongkong[['review_id','text']])
     print("Branch: Paris")
-    print(f"Positive Percentage: {positive_percentage}%")
-    print(f"Neutral Percentage: {neutral_percentage}%")
-    print(f"Negative Percentage: {negative_percentage}%")
+    print(f"Positive Percentage: {positive_percentage}")
+    print(f"Neutral Percentage: {neutral_percentage}")
+    print(f"Negative Percentage: {negative_percentage}")
     
     context = {
         'branch': 'Paris',
@@ -91,7 +91,7 @@ def sentiment_Paris(request):
         'neutral_percentage': neutral_percentage,
         'negative_percentage': negative_percentage,
     }
-    return render(request, 'places.html', context)
+    return render(request, 'webpages/places.html', context)
 
 def sentiment_California(request):
     reviews_california = DisneylandReview.objects.filter(branch='Disneyland_California')
@@ -113,5 +113,8 @@ def sentiment_California(request):
         'neutral_percentage': neutral_percentage,
         'negative_percentage': negative_percentage,
     }
-    return render(request, 'places.html', context)
+    return render(request, 'webpages/places.html', context)
    
+def places(request):
+    context = {}
+    return render(request, "webpages/places.html", context=context)

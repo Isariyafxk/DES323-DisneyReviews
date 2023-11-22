@@ -1,0 +1,88 @@
+<div class="piechart">
+    <script src="https://d3js.org/d3.v5.min.js"></script>                                           
+    <div id="pie-chart">
+        <input type="file" id="csvFileInput" accept=".csv">
+  
+        <script>
+            document.getElementById('csvFileInput').addEventListener('change', handleFileSelect); // Event listener triggered when a file is selected
+            //ฟังก์ชั่นจัดการการเลือกไฟล์
+            function handleFileSelect(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+  
+                reader.onload = function (e) {
+                    console.log('File read successfully');
+                    //ได้รับข้อมูลของไฟล์
+                    const contents = e.target.result;
+                    //แยกกับวิเคราะห์ข้อมูลที่ได้ในไฟล์
+                    const parsedData = d3.csvParse(contents);
+                    console.log('Parsed data:', parsedData);
+  
+                    // Filter data for positive, negative, and neutral
+                    const filteredData = parsedData.filter(d =>
+                        d.Sentiment.trim().toLowerCase() === 'positive' ||
+                        d.Sentiment.trim().toLowerCase() === 'negative' ||
+                        d.Sentiment.trim().toLowerCase() === 'neutral'
+                    );
+                    console.log('Filtered data:', filteredData);
+                    //process data ให้ใช้กับ pie chart ได้
+                    const processedData = filteredData.map(d => ({
+                        label: d.Sentiment,
+                        value: +d.Percentage
+                    }));
+                    console.log('Processed data:', processedData);
+  
+                    // อันนี้เป็นการสร้าง piechart โดยใช้ D3 
+                    const width = 400;
+                    const height = 400;
+                    const radius = Math.min(width, height) / 2;
+  
+                    const color = d3.scaleOrdinal()
+                        .domain(processedData.map(d => d.label))
+                        .range(['#BCC9CC', '#D2D6D0', '#290568']);
+  
+                    const svg = d3.select('#pie-chart')
+                        .append('svg')
+                        .attr('width', width)
+                        .attr('height', height)
+                        .append('g')
+                        .attr('transform', `translate(${width / 2},${height / 2})`);
+  
+                    const pie = d3.pie()
+                        .value(d => d.value);
+  
+                    const data_ready = pie(processedData);
+                    const arc = d3.arc()
+                        .innerRadius(0)
+                        .outerRadius(radius);
+  
+                    svg.selectAll('path')
+                        .data(data_ready)
+                        .enter()
+                        .append('path')
+                        .attr('d', arc)
+                        .attr('fill', (d, i) => color(i)); //ตรงนี้คือจบการ สร้าง piechart
+  
+                    // ใส่ label ให้ pie chart ว่าอันไหนเป็น positive, negative, neutral
+                    svg.selectAll('text')
+                        .data(data_ready)
+                        .enter()
+                        .append('text')
+                        .text(d => `${d.data.label}: ${d.data.value}%`)
+                        .attr('transform', d => `translate(${arc.centroid(d)})`)
+                        .style('text-anchor', 'middle')
+                        .style('font-size', '12px')
+                        .style('fill', d => {
+                            if (d.data.label === 'Positive') return 'green';
+                            else if (d.data.label === 'Negative') return 'red';
+                            else if (d.data.label === 'Neutral') return 'yellow';
+                            else return 'black'; // Fallback color
+                        });
+                };
+                // อ่านไฟล์ที่เลือกให้เป็น text
+                reader.readAsText(file);
+            }
+        </script>
+        <p style="font-size: 42px; color: #290568; font-weight: 1000;">PIE CHART</p>
+    </div>
+  </div>

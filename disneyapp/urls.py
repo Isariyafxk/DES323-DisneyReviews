@@ -5,5 +5,6 @@ urlpatterns = [
     path("importdata",views.import_data_csv),
     path("sentimentHK",views.sentiment_HongKong),
     path("sentimentPS",views.sentiment_Paris),
-    path("sentimentCL",views.sentiment_California)
+    path("sentimentCL",views.sentiment_California),
+    path("places",views.places),
 ]
